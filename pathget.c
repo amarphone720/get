@@ -10,6 +10,8 @@ int main(int argc, char *argv[]) {
 
     CURL *curl;
     CURLcode res;
+    long response_code;
+    double response_size;
 
     // Initialize libcurl
     curl = curl_easy_init();
@@ -35,11 +37,25 @@ int main(int argc, char *argv[]) {
         // Attach headers to the request
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
-        // Perform the request, res will get the return code
+        // Perform the request
         res = curl_easy_perform(curl);
 
         // Check for errors
-        if (res != CURLE_OK) {
+        if (res == CURLE_OK) {
+            // Get the HTTP status code
+            curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+
+            // Get the size of the response
+            curl_easy_getinfo(curl, CURLINFO_SIZE_DOWNLOAD, &response_size);
+
+            // Print status code and response size
+            printf("\n");
+            printf("XXXXXXXXXXXXXXXXXXXX\n");
+            printf("%s\n",argv[1]);
+            printf("Status Code: %ld\n", response_code);
+            printf("Response Size: %.0f bytes\n", response_size);
+            printf("======================\n");
+        } else {
             fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
         }
 
